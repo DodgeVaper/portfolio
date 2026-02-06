@@ -6,10 +6,26 @@ import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { ThemeInitScript } from '@/components/ThemeInitScript';
 
+function getValidSiteUrl(): string {
+  const url = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (!url) return 'http://localhost:3000';
+  try {
+    new URL(url);
+    return url;
+  } catch {
+    return 'http://localhost:3000';
+  }
+}
+
 export async function generateMetadata(): Promise<Metadata> {
-  const raw = (await reader.singletons.settings.read()) as unknown as Partial<SiteSettings> | null;
+  let raw: Partial<SiteSettings> | null = null;
+  try {
+    raw = (await reader.singletons.settings.read()) as unknown as Partial<SiteSettings> | null;
+  } catch (error) {
+    console.error('Failed to read settings singleton:', error);
+  }
   const settings = { ...defaultSettings, ...(raw ?? {}) } as SiteSettings;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+  const siteUrl = getValidSiteUrl();
   return {
     title: `${settings.ownerName} — Portfolio`,
     description: settings.intro,
@@ -18,7 +34,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
-  const raw = (await reader.singletons.settings.read()) as unknown as Partial<SiteSettings> | null;
+  let raw: Partial<SiteSettings> | null = null;
+  try {
+    raw = (await reader.singletons.settings.read()) as unknown as Partial<SiteSettings> | null;
+  } catch (error) {
+    console.error('Failed to read settings singleton:', error);
+  }
   const settings = { ...defaultSettings, ...(raw ?? {}) } as SiteSettings;
 
   const nav = getNav(settings);

@@ -5,13 +5,33 @@ import { TaglineCycle } from '@/components/TaglineCycle';
 import { GlassCard } from '@/components/GlassCard';
 
 export default async function HomePage() {
-  const raw = (await reader.singletons.settings.read()) as Partial<SiteSettings> | null;
+  let raw: Partial<SiteSettings> | null = null;
+  try {
+    raw = (await reader.singletons.settings.read()) as Partial<SiteSettings> | null;
+  } catch (error) {
+    console.error('Failed to read settings singleton:', error);
+  }
   const settings = { ...defaultSettings, ...(raw ?? {}) } as SiteSettings;
 
   const [projects, releases, posts] = await Promise.all([
-    settings.sections.showProjects ? reader.collections.projects.all() : Promise.resolve([]),
-    settings.sections.showMusic ? reader.collections.releases.all() : Promise.resolve([]),
-    settings.sections.showBlog ? reader.collections.posts.all() : Promise.resolve([]),
+    settings.sections.showProjects
+      ? reader.collections.projects.all().catch((err) => {
+          console.error('Failed to read projects:', err);
+          return [];
+        })
+      : Promise.resolve([]),
+    settings.sections.showMusic
+      ? reader.collections.releases.all().catch((err) => {
+          console.error('Failed to read releases:', err);
+          return [];
+        })
+      : Promise.resolve([]),
+    settings.sections.showBlog
+      ? reader.collections.posts.all().catch((err) => {
+          console.error('Failed to read posts:', err);
+          return [];
+        })
+      : Promise.resolve([]),
   ]);
 
   return (

@@ -5,7 +5,12 @@ import { reader } from '@/lib/keystatic';
 import { defaultSettings, type SiteSettings } from '@/lib/site';
 
 export default async function ContactPage() {
-  const raw = (await reader.singletons.settings.read()) as Partial<SiteSettings> | null;
+  let raw: Partial<SiteSettings> | null = null;
+  try {
+    raw = (await reader.singletons.settings.read()) as Partial<SiteSettings> | null;
+  } catch (error) {
+    console.error('Failed to read settings singleton:', error);
+  }
   const settings = { ...defaultSettings, ...(raw ?? {}) } as SiteSettings;
 
   return (

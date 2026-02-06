@@ -3,13 +3,24 @@ import { reader } from '@/lib/keystatic';
 import { MarkdocContent } from '@/components/MarkdocContent';
 
 export async function generateStaticParams() {
-  const slugs = await reader.collections.posts.list();
-  return slugs.map((slug) => ({ slug }));
+  try {
+    const slugs = await reader.collections.posts.list();
+    return slugs.map((slug) => ({ slug }));
+  } catch (error) {
+    console.error('Failed to list posts for static params:', error);
+    return [];
+  }
 }
 
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
   const { slug } = params;
-  const post = await reader.collections.posts.read(slug);
+  let post;
+  try {
+    post = await reader.collections.posts.read(slug);
+  } catch (error) {
+    console.error(`Failed to read post ${slug}:`, error);
+    notFound();
+  }
   if (!post) notFound();
 
   const content = post.content ? await post.content() : null;

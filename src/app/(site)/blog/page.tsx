@@ -2,7 +2,13 @@ import { reader } from '@/lib/keystatic';
 import { BlogList, type BlogItem } from '@/components/BlogList';
 
 export default async function BlogPage() {
-  const all = await reader.collections.posts.all();
+  let all: Awaited<ReturnType<typeof reader.collections.posts.all>>;
+  try {
+    all = await reader.collections.posts.all();
+  } catch (error) {
+    console.error('Failed to read posts:', error);
+    all = [];
+  }
   const posts: BlogItem[] = all
     .map((p) => ({
       slug: p.slug,

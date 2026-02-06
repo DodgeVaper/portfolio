@@ -5,7 +5,13 @@ import { AudioPreview } from '@/components/AudioPreview';
 import { reader } from '@/lib/keystatic';
 
 export default async function MusicPage() {
-  const all = await reader.collections.releases.all();
+  let all: Awaited<ReturnType<typeof reader.collections.releases.all>>;
+  try {
+    all = await reader.collections.releases.all();
+  } catch (error) {
+    console.error('Failed to read releases:', error);
+    all = [];
+  }
 
   return (
     <div className="container-pad py-14 sm:py-20">

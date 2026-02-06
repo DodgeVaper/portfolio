@@ -5,7 +5,13 @@ import { MarkdocContent } from '@/components/MarkdocContent';
 import { GlassCard } from '@/components/GlassCard';
 
 export default async function AboutPage() {
-  const about = await reader.singletons.about.read();
+  let about;
+  try {
+    about = await reader.singletons.about.read();
+  } catch (error) {
+    console.error('Failed to read about singleton:', error);
+    about = null;
+  }
 
   const bio = about?.bio ? await about.bio() : null;
 

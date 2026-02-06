@@ -3,7 +3,13 @@ import { ProjectsTabs } from '@/components/ProjectsTabs';
 import Link from 'next/link';
 
 export default async function ProjectsPage() {
-  const all = await reader.collections.projects.all();
+  let all: Awaited<ReturnType<typeof reader.collections.projects.all>>;
+  try {
+    all = await reader.collections.projects.all();
+  } catch (error) {
+    console.error('Failed to read projects:', error);
+    all = [];
+  }
   const projects = all.map((p) => ({
     slug: p.slug,
     title: p.entry.title,
