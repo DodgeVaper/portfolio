@@ -1,26 +1,58 @@
 @import "tailwindcss";
 
+@plugin "@tailwindcss/typography";
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #0a0a0f;
+  --fg: #f0f0f0;
+  --muted: color-mix(in oklab, var(--fg), transparent 55%);
+  --panel: color-mix(in oklab, white, transparent 92%);
+  --panel-border: color-mix(in oklab, white, transparent 88%);
+  --accent-code: #00f5d4;
+  --accent-music: #f20089;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--bg);
+  --color-foreground: var(--fg);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+[data-theme="light"] {
+  --bg: #fafafa;
+  --fg: #0a0a0f;
+  --muted: color-mix(in oklab, var(--fg), transparent 55%);
+  --panel: color-mix(in oklab, black, transparent 96%);
+  --panel-border: color-mix(in oklab, black, transparent 90%);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans), system-ui, -apple-system, Segoe UI, Roboto,
+    Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
 }
+
+.container-pad {
+  @apply mx-auto w-full max-w-6xl px-5 sm:px-6 lg:px-8;
+}
+
+.glass {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  backdrop-filter: blur(14px);
+}
+
+.text-muted {
+  color: var(--muted);
+}
+
+.accent-code {
+  color: var(--accent-code);
+}
+
+.accent-music {
+  color: var(--accent-music);
+}
+
