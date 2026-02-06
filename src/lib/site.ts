@@ -1,4 +1,4 @@
-import type { NavItem } from '@/components/SiteHeader';
+import type { NavItem } from '../components/SiteHeader';
 
 export type SiteSettings = {
   ownerName: string;
